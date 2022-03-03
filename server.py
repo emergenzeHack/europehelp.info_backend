@@ -4,7 +4,7 @@ import yaml, json
 import credentials
 import re
 from geopy.geocoders import Nominatim
-geolocator = Nominatim(user_agent="Covid19Italia.help")
+geolocator = Nominatim(user_agent="europehelp.info")
 
 with open('italy_geo.json') as f:
     italy_geo = json.load(f)
@@ -23,10 +23,10 @@ PASSWORD = credentials.password
 
 # The repository to add this issue to
 REPO_OWNER = 'emergenzeHack'
-REPO_NAME = 'covid19italia_segnalazioni'
+REPO_NAME = 'europehelp.info_segnalazioni'
 
 repo_names = {
-    'it': 'covid19italia_segnalazioni',
+    'it': 'europehelp.info_segnalazioni',
     'pt': 'covid19pt_issues',
     'gr': 'covid19gr_issues'
 }
