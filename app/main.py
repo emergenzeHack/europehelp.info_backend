@@ -5,6 +5,7 @@ import credentials
 import re
 import logging
 from geopy.geocoders import Nominatim
+import logging
 geolocator = Nominatim(user_agent="europehelp.info")
 
 with open('italy_geo.json') as f:
@@ -34,19 +35,21 @@ repo_names = {
 
 @app.route('/')
 def paynoattention():
-    return 'Pay no attention to that man behind the curtain!'
+    app.logger.info ("404")
+    return 'Pay no attention to that man behind the curtain!', 404
 
 @app.route('/report', methods=['POST'])
 def report():
+    app.logger.info("request headers {}".format(request.headers))
+    app.logger.info("request JSON {}".format(request.json))
     process_report(request.json, request.headers)
     return "OK", 200
 
 def process_report(payload, headers_pre, additional_labels=[],issue_title=None):
-    app.logger.info(payload)
     # Key names to lowercase
     # not sure why this is needed
     headers = {k.lower(): v for k, v in headers_pre.items()}
-    print("Processing %s with headers %s .." % (payload, headers))
+    app.logger.info("Processing %s with headers %s .." % (payload, headers))
 
     # Create an authenticated session to create the issue
     session = requests.Session()
@@ -272,5 +275,10 @@ def open_github_issue(session, title, body=None, assignee=None, milestone=None, 
         print('Could not create Issue', title)
         print('Response:', r.content)
 
-
-#app.run(host='0.0.0.0');
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
+else:
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
+    app.logger.info ("Using gunicorn logger")
