@@ -32,13 +32,7 @@ REPO_OWNER = 'emergenzeHack'
 REPO_NAME = 'europehelp.info_segnalazioni'
 
 repo_names = {
-<<<<<<< HEAD:app/main.py
     'en': 'europehelp.info_segnalazioni'
-=======
-    'it': 'europehelp.info_segnalazioni',
-    'pt': 'covid19pt_issues',
-    'gr': 'covid19gr_issues'
->>>>>>> 0893eb8 (move to europehelp.info):server.py
 }
 
 @app.route('/')
