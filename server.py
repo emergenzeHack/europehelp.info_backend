@@ -3,6 +3,7 @@ import requests
 import yaml, json
 import credentials
 import re
+import logging
 from geopy.geocoders import Nominatim
 geolocator = Nominatim(user_agent="europehelp.info")
 
@@ -41,7 +42,7 @@ def report():
     return "OK", 200
 
 def process_report(payload, headers_pre, additional_labels=[],issue_title=None):
-    print(payload)
+    app.logger.info(payload)
     # Key names to lowercase
     # not sure why this is needed
     headers = {k.lower(): v for k, v in headers_pre.items()}
