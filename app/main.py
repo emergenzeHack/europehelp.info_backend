@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 import requests
 import yaml, json
 import credentials
@@ -18,6 +19,9 @@ comuni = sorted(comuni, key=lambda k: k['popolazione'], reverse=True)
 
 app = Flask(__name__)
 
+cors = CORS(app)
+
+
 # Authentication for user filing issue (must have read/write access to
 # repository to add issue to)
 USERNAME = credentials.user
@@ -28,9 +32,7 @@ REPO_OWNER = 'emergenzeHack'
 REPO_NAME = 'europehelp.info_segnalazioni'
 
 repo_names = {
-    'it': 'europehelp.info_segnalazioni',
-    'pt': 'covid19pt_issues',
-    'gr': 'covid19gr_issues'
+    'en': 'europehelp.info_segnalazioni'
 }
 
 @app.route('/')
@@ -45,7 +47,8 @@ def report():
     process_report(request.json, request.headers)
     return "OK", 200
 
-def process_report(payload, headers_pre, additional_labels=[],issue_title=None):
+def process_report(request, headers_pre, additional_labels=[],issue_title=None):
+    payload=request['data']
     # Key names to lowercase
     # not sure why this is needed
     headers = {k.lower(): v for k, v in headers_pre.items()}
@@ -68,12 +71,14 @@ def process_report(payload, headers_pre, additional_labels=[],issue_title=None):
 
     if 'label' in list(headers):
         label = headers['label']
+    else:
+        label = "form_raw"
 
     # If country is not specified, IT is default
     if 'country' in list(headers):
         country = headers['country']
     else:
-        country = 'it'
+        country = 'en'
 
     location = False
     location_geo = False
@@ -84,7 +89,8 @@ def process_report(payload, headers_pre, additional_labels=[],issue_title=None):
         meaningful_fields = {
             'it' : ["Titolo", "Cosa", "Testo", "Descrizione"],
             'pt' : ["Nome", "Finalidade"],
-            'gr' : []
+            'gr' : [],
+            'en' : ["title","description"],
         }
 
         for field in meaningful_fields[country]:
@@ -202,10 +208,11 @@ def process_report(payload, headers_pre, additional_labels=[],issue_title=None):
 
     blacklist = ["promozioniltaliane.com", "vuedc.info"]
 
-    for word in blacklist:
-        for field in list(payload):
-            if word in payload[field]:
-                labels.append("spam")
+    # FIXME this has to be restored in some other way
+    #for word in blacklist:
+    #    for field in list(payload):
+    #        if word in payload[field]:
+    #            labels.append("spam")
 
     # Prepara il payload in YAML
     yaml_payload = "<pre><yamldata>\n"+yaml.dump(stripped_payload, allow_unicode=True)+"</yamldata></pre>"
