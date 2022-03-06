@@ -95,7 +95,9 @@ def process_report(request, headers_pre, additional_labels=[],issue_title=None):
 
         for field in meaningful_fields[country]:
             if field in list(payload):
-                issue_title=payload[field][0:100]
+                if len(payload[field]) > 0:
+                    issue_title=payload[field][0:100]
+                    break
 
         if "Chi" in list(payload) and label == "Raccolte fondi":
             issue_title = "Raccolta fondi %s" % (payload["Chi"])
