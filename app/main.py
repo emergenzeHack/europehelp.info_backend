@@ -49,6 +49,13 @@ def report():
 
 def process_report(request, headers_pre, additional_labels=[],issue_title=None):
     payload=request['data']
+    for k in payload.keys():
+        try:
+            payload[k]=payload[k].strip()
+        except Exception as e:
+            print(e)
+            pass
+
     # Key names to lowercase
     # not sure why this is needed
     headers = {k.lower(): v for k, v in headers_pre.items()}
@@ -69,8 +76,8 @@ def process_report(request, headers_pre, additional_labels=[],issue_title=None):
             payload[new_key_name] = payload[key_name]
             payload.pop(key_name)
 
-    if 'label' in list(headers):
-        label = headers['label']
+    if 'label' in list(payload):
+        label = payload['label']
     else:
         label = "form_raw"
 
@@ -90,7 +97,7 @@ def process_report(request, headers_pre, additional_labels=[],issue_title=None):
             'it' : ["Titolo", "Cosa", "Testo", "Descrizione"],
             'pt' : ["Nome", "Finalidade"],
             'gr' : [],
-            'en' : ["title","description"],
+            'en' : ["title","what","description"],
         }
 
         for field in meaningful_fields[country]:
@@ -147,7 +154,7 @@ def process_report(request, headers_pre, additional_labels=[],issue_title=None):
             elif "Descrizione" in list(payload) and not location:
                 location = extract_location(payload["Descrizione"])
 
-        if "location" in list(payload) and "Posizione" not in list(payload):
+        if "location" in payload and "Posizione" not in  payload:
             location_geo = None
             tries = 0
             while location_geo is None:
@@ -183,6 +190,15 @@ def process_report(request, headers_pre, additional_labels=[],issue_title=None):
             }
             labels.append("Posizione da verificare")
 
+    if "location" in payload:
+        location=payload["location"]
+        address = location["address"]
+        if "lat" in  address:
+            lat = address["lat"]
+            if "lon" in address:
+                lon=address["lon"]
+                payload["Posizione"]=str(lat)+" "+str(lon)
+
     positionFound = None
     positionLabels = ["Posizione", "location", "Indirizzo"]
 
@@ -217,7 +233,7 @@ def process_report(request, headers_pre, additional_labels=[],issue_title=None):
     #            labels.append("spam")
 
     # Prepara il payload in YAML
-    yaml_payload = "<pre><yamldata>\n"+yaml.dump(stripped_payload, allow_unicode=True)+"</yamldata></pre>"
+    yaml_payload = "<pre><yamldata>\n"+yaml.dump(stripped_payload, allow_unicode=True,sort_keys=False)+"</yamldata></pre>"
 
     # Apri issue su GitHub
     comment_url = open_github_issue(session, title=issue_title, body=yaml_payload, labels=labels, country=country)
