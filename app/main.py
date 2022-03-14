@@ -3,6 +3,7 @@ import logging
 
 import requests
 import telegram
+import tweepy
 import yaml
 from flask import Flask, request
 from flask_cors import CORS
@@ -14,6 +15,15 @@ geolocator = Nominatim(user_agent="europehelp.info")
 
 
 bot = telegram.Bot(token=credentials.telegram_api_token)
+
+client = tweepy.Client(
+    consumer_key=credentials.consumer_key,
+    consumer_secret=credentials.consumer_secret,
+    access_token=credentials.access_token,
+    access_token_secret=credentials.access_token_secret,
+    bearer_token=credentials.bearer_token,
+)
+
 
 with open("italy_geo.json") as f:
     italy_geo = json.load(f)
@@ -52,9 +62,11 @@ def webhook():
     app.logger.info("request JSON {}".format(request.json))
 
     if request.json["action"] == "labeled":
+        msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
         if request.json["label"]["name"] == "telegram-channel":
-            msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
             bot.send_message(text=msg, chat_id=-1001568943771)
+        elif request.json["label"]["name"] == "tweet":
+            client.create_tweet(text=msg)
     else:
         print("ignoring payload..")
 
