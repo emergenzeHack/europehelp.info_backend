@@ -9,11 +9,8 @@ import yaml
 from flask import Flask, request
 from flask_cors import CORS
 from geopy.geocoders import Nominatim
-
-import credentials
-import hashtags
-
-geolocator = Nominatim(user_agent="europehelp.info")
+import logging
+geolocator = Nominatim(user_agent="ukrainehelp.emergenzehack.info")
 
 hashtags = hashtags.replacements
 
@@ -50,10 +47,12 @@ USERNAME = credentials.user
 PASSWORD = credentials.password
 
 # The repository to add this issue to
-REPO_OWNER = "emergenzeHack"
-REPO_NAME = "europehelp.info_segnalazioni"
+REPO_OWNER = 'emergenzeHack'
+REPO_NAME = 'ukrainehelp.emergenzehack.info_segnalazioni'
 
-repo_names = {"en": "europehelp.info_segnalazioni"}
+repo_names = {
+    'en': 'ukrainehelp.emergenzehack.info_segnalazioni'
+}
 
 
 def add_hashtag(input_match):
@@ -275,7 +274,7 @@ def process_report(request, headers_pre, additional_labels=[], issue_title=None)
                 payload["Posizione"] = str(lat) + " " + str(lon)
 
     positionFound = None
-    positionLabels = ["Posizione", "location", "Indirizzo"]
+    positionLabels = ["Posizione", "location", "Indirizzo", "address"]
 
     for labelname in positionLabels:
         # Aggiungi label posizione mancante
