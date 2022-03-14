@@ -40,6 +40,12 @@ def paynoattention():
     app.logger.info ("404")
     return 'Pay no attention to that man behind the curtain!', 404
 
+@app.route('/webhook')
+def webhook():
+    app.logger.info("request headers {}".format(request.headers))
+    app.logger.info("request JSON {}".format(request.json))
+    return "OK", 200
+
 @app.route('/report', methods=['POST'])
 def report():
     app.logger.info("request headers {}".format(request.headers))
