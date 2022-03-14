@@ -1,14 +1,19 @@
 import json
 import logging
 
-import credentials
 import requests
+import telegram
 import yaml
 from flask import Flask, request
 from flask_cors import CORS
 from geopy.geocoders import Nominatim
 
+import credentials
+
 geolocator = Nominatim(user_agent="europehelp.info")
+
+
+bot = telegram.Bot(token=credentials.telegram_api_token)
 
 with open("italy_geo.json") as f:
     italy_geo = json.load(f)
@@ -41,10 +46,18 @@ def paynoattention():
     return "Pay no attention to that man behind the curtain!", 404
 
 
-@app.route("/webhook")
+@app.route("/webhook", methods=["POST"])
 def webhook():
     app.logger.info("request headers {}".format(request.headers))
     app.logger.info("request JSON {}".format(request.json))
+
+    if request.json["action"] == "labeled":
+        if request.json["label"]["name"] == "telegram-channel":
+            msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
+            bot.send_message(text=msg, chat_id=-1001568943771)
+    else:
+        print("ignoring payload..")
+
     return "OK", 200
 
 
@@ -344,9 +357,11 @@ def open_github_issue(
         print("Response:", r.content)
 
 
+print(__name__)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=3010, debug=True)
 else:
+    print("o")
     gunicorn_logger = logging.getLogger("gunicorn.error")
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)

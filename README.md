@@ -6,7 +6,6 @@ I [form](https://www.covid19italia.info/segnala/) (in XLSform) vengono mantenuti
 
 Le POST provenienti da quei form puntano al backend implementato qui.
 
-
 ## backend
 
 `server.py` si occupa di ricevere le risposte ai form ed inviarle come GitHub Issues al repository [covid19italia_segnalazioni](https://github.com/emergenzeHack/covid19italia_segnalazioni/)
@@ -14,15 +13,15 @@ Le POST provenienti da quei form puntano al backend implementato qui.
 Prerequisiti
 
 ```bash
-apt install python3 python3-pip
-pip install --user pipenv
+apt install python3
 ```
 
 Avvio
 
 ```bash
-pipenv shell
-pipenv install
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
 ```
 
 ## utils
