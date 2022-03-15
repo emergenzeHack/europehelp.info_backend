@@ -62,10 +62,12 @@ def webhook():
     app.logger.info("request JSON {}".format(request.json))
 
     if request.json["action"] == "labeled":
-        msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
+
         if request.json["label"]["name"] == "telegram-channel":
+            msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
             bot.send_message(text=msg, chat_id=-1001568943771)
         elif request.json["label"]["name"] == "tweet":
+            msg = f"{request.json['issue']['title']} https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ \n#UkraineHelpIt #UkraineWar #Ucraina"
             client.create_tweet(text=msg)
     else:
         print("ignoring payload..")
