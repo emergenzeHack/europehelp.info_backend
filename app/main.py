@@ -15,6 +15,7 @@ import hashtags
 
 geolocator = Nominatim(user_agent="europehelp.info")
 
+hashtags = hashtags.replacements
 
 bot = telegram.Bot(token=credentials.telegram_api_token)
 
@@ -81,22 +82,24 @@ def webhook():
     """
     This webhook listener checks for "Label added" events
     """
-    app.logger.info("request headers {}".format(request.headers))
-    app.logger.info("request JSON {}".format(request.json))
+    # app.logger.info("request headers {}".format(request.headers))
+    # app.logger.info("request JSON {}".format(request.json))
 
     if request.json["action"] == "labeled":
-
+        print(f"Received action {request.json['action']}..")
         if request.json["label"]["name"] == "telegram-channel":
             msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
             msg = replace_to_hashtags(msg)
             bot.send_message(text=msg, chat_id=-1001568943771)
+            print("Sent telegram message")
         elif request.json["label"]["name"] == "tweet":
             msg = f"{request.json['issue']['title']} https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ \n#UkraineHelpIT #UkraineWar #Ucraina"
             # places = twitter_api_v1.search_geo(lat="43", long="-75", max_results=10)
             msg = replace_to_hashtags(msg)
             client.create_tweet(text=msg)  # , place_id=places[0].id
+            print("Tweeted")
     else:
-        print("ignoring payload..")
+        print("Ignoring payload..")
 
     return "OK", 200
 
