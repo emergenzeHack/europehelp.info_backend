@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 
 import requests
 import telegram
@@ -10,6 +11,7 @@ from flask_cors import CORS
 from geopy.geocoders import Nominatim
 
 import credentials
+import hashtags
 
 geolocator = Nominatim(user_agent="europehelp.info")
 
@@ -23,6 +25,9 @@ client = tweepy.Client(
     access_token_secret=credentials.access_token_secret,
     bearer_token=credentials.bearer_token,
 )
+
+auth = tweepy.OAuth2BearerHandler(credentials.bearer_token)
+twitter_api_v1 = tweepy.API(auth)
 
 
 with open("italy_geo.json") as f:
@@ -50,6 +55,21 @@ REPO_NAME = "europehelp.info_segnalazioni"
 repo_names = {"en": "europehelp.info_segnalazioni"}
 
 
+def add_hashtag(input_match):
+    input_string = input_match.group().lower()
+
+    if input_string in hashtags:
+        return hashtags[input_string]
+
+
+def replace_to_hashtags(text):
+    big_regex = re.compile(
+        r"\b%s\b" % r"\b|\b".join(map(re.escape, hashtags.keys())), re.IGNORECASE
+    )
+    result = big_regex.sub(add_hashtag, text)
+    return result
+
+
 @app.route("/")
 def paynoattention():
     app.logger.info("404")
@@ -58,6 +78,9 @@ def paynoattention():
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    """
+    This webhook listener checks for "Label added" events
+    """
     app.logger.info("request headers {}".format(request.headers))
     app.logger.info("request JSON {}".format(request.json))
 
@@ -65,10 +88,13 @@ def webhook():
 
         if request.json["label"]["name"] == "telegram-channel":
             msg = f"{request.json['issue']['title']} - https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ "
+            msg = replace_to_hashtags(msg)
             bot.send_message(text=msg, chat_id=-1001568943771)
         elif request.json["label"]["name"] == "tweet":
-            msg = f"{request.json['issue']['title']} https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ \n#UkraineHelpIt #UkraineWar #Ucraina"
-            client.create_tweet(text=msg)
+            msg = f"{request.json['issue']['title']} https://ukrainehelp.emergenzehack.info/issues/{request.json['issue']['number']}/ \n#UkraineHelpIT #UkraineWar #Ucraina"
+            # places = twitter_api_v1.search_geo(lat="43", long="-75", max_results=10)
+            msg = replace_to_hashtags(msg)
+            client.create_tweet(text=msg)  # , place_id=places[0].id
     else:
         print("ignoring payload..")
 
