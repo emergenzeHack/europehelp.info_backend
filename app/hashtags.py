@@ -27,7 +27,7 @@ replacements = {
     "bufale": "#bufale",
     "truffe": "#truffe",
     "volontari": "#volontari",
-    "disabilità ": "#disabilita",
+    "disabilità": "#disabilita",
     "Lgbtq": "#lgbtq",
     "lgbtq": "#lgbtq",
     "Lgbtqi": "#lgbtqi",
