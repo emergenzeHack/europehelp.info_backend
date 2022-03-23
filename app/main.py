@@ -292,6 +292,12 @@ def process_report(request, headers_pre, additional_labels=[], issue_title=None)
     # Aggiungi le label preparate
     labels.append(label)
 
+    if "servicetypes" in payload:
+        app.logger.info ("servicetypes {}".format(payload["servicetypes"]))
+        for k,v in payload["servicetypes"].items():
+            if v:
+                labels.append(k)
+
     for label in additional_labels:
         labels.append(label)
 
