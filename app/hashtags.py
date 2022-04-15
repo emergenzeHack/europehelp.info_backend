@@ -18,7 +18,7 @@ replacements = {
     "mediazione linguistica": "#mediazionelinguistica",
     "mediazione culturale": "#mediazioneculturale",
     "mediatori linguistici": "#mediatorilinguistici",
-    "mediatori culturali": "#mediatoriculturali"
+    "mediatori culturali": "#mediatoriculturali",
     "mediatori": "#mediatori",
     "traduttori": "#traduttori",
     "interpreti": "#interpreti",
@@ -45,7 +45,7 @@ replacements = {
     "Lgbtq": "#lgbtq",
     "lgbtq": "#lgbtq",
     "Lgbtqi": "#lgbtqi",
-    "lgbtqi": "#lgbtqi"
+    "lgbtqi": "#lgbtqi",
     "corso": "#corso",
     "corsi": "#corsi",
     "lezioni": "#lezioni",
@@ -58,5 +58,4 @@ replacements = {
     "autobus": "#autobus",
     "studenti": "#studenti",
     "permesso di soggiorno": "#permessodisoggiorno"
-    
 }
