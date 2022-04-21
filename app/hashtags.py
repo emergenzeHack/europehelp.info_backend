@@ -52,10 +52,11 @@ replacements = {
     "consolato": "#consolato",
     "ambasciata": "#ambasciata",
     "consolati": "#consolati",
-    "trasporto": "#tradporto",
+    "trasporto": "#trasporto",
     "trasporti": "#trasporti",
     "bus": "#bus",
     "autobus": "#autobus",
     "studenti": "#studenti",
-    "permesso di soggiorno": "#permessodisoggiorno"
+    "permesso di soggiorno": "#permessodisoggiorno",
+    "formazione": #formazione"
 }
