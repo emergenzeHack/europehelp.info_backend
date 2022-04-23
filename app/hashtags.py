@@ -58,5 +58,5 @@ replacements = {
     "autobus": "#autobus",
     "studenti": "#studenti",
     "permesso di soggiorno": "#permessodisoggiorno",
-    "formazione": #formazione"
+    "formazione": "#formazione"
 }
